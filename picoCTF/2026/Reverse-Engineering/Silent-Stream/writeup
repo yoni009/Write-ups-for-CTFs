@@ -1,0 +1,189 @@
+Silent Stream picoCTF 2026
+
+Challenge Name: Silent Stream
+Difficulty: Medium
+Category: Reverse Engineering
+Author: Yonathan
+
+We were given a .pcap file and a Python script. The goal was to extract a hidden file from the network capture and find the flag.
+
+At first glance, the capture looked like HTTP traffic containing 143 requests. However, after inspecting the packets more closely, it turned out to be a raw TCP file transfer containing an encoded JPEG image.
+
+The provided Python script revealed that the data was encoded using a Caesar-style byte shift with a key of 42.
+
+Tools used: tshark, xxd, Python, file, and optionally exiftool.
+
+Step 1: Inspect the PCAP
+
+I first inspected the protocol hierarchy using tshark:
+
+tshark -r capture.pcap -q -z io,phs
+
+
+The output showed:
+
+eth  frames:143  bytes:16837
+ip   frames:143  bytes:16837
+tcp  frames:143  bytes:16837
+data frames:143  bytes:16837
+
+
+This was an important clue. There was no HTTP, DNS, or TLS traffic. Instead, all 143 packets contained raw TCP data.
+
+I initially assumed the traffic was HTTP and tried filtering for POST requests, but that returned nothing. The protocol hierarchy showed that the data was simply being transferred over a TCP connection.
+
+Step 2: Examine How the Data Is Split
+
+Next, I checked the TCP streams and payload lengths:
+
+tshark -r capture.pcap -T fields -e tcp.stream -e data.len
+
+
+The output looked like:
+
+0   64
+0   64
+0   64
+...
+0   64
+0   27
+
+
+This showed that all packets belonged to the same TCP stream.
+
+Most packets contained 64 bytes, while the final packet contained 27 bytes.
+
+Therefore:
+
+142 × 64 + 27 = 9115 bytes
+
+
+So the capture contained a single file transferred over TCP in 143 chunks.
+
+Step 3: Reassemble the File
+
+I then extracted the TCP payload from each packet and combined the data into a single file:
+
+tshark -r capture.pcap -Y 'tcp.stream == 0' -T fields -e data.data \
+| grep -v '^$' \
+| tr -d '\n' \
+| xxd -r -p > encoded.bin
+
+
+The important parts of the command are:
+
+tcp.stream == 0 — selects the TCP stream containing the file.
+
+-e data.data — extracts the TCP payload as hexadecimal.
+
+tr -d '\n' — joins all the hexadecimal data together.
+
+xxd -r -p — converts the hexadecimal back into raw bytes.
+
+> encoded.bin — saves the reconstructed file.
+
+I then checked the file size:
+
+ls -l encoded.bin
+
+
+The file was 9115 bytes, confirming that the TCP reassembly worked correctly.
+
+Step 4: Identify the File
+
+I ran file against the reconstructed data:
+
+file encoded.bin
+
+
+The output was:
+
+encoded.bin: data
+
+
+This meant the file didn't have a recognizable file signature.
+
+I then inspected the first few bytes:
+
+xxd encoded.bin | head -3
+
+
+The beginning of the file looked like:
+
+00000000: 2902 290a 2a3a 7470 7370 2a2b 2b2a 2a2b  ).).*:tpsp*++**+
+00000010: 2a2b 2a2a 2905 2a6d 2a32 3030 3130 2f32  *+**).*m*20010/2
+
+
+The bytes looked like they had been shifted.
+
+The Python script provided with the challenge contained:
+
+def encode_byte(b, key):
+return (b + key) % 256
+
+
+This indicated that the original data had been encoded by adding a key to every byte.
+
+Therefore, to decode it, we needed to subtract the key:
+
+decoded = (encoded - key) % 256
+
+
+The key was 42.
+
+For example:
+
+0x29 - 42 = 0xFF
+0x02 - 42 = 0xD8
+0x29 - 42 = 0xFF
+0x0A - 42 = 0xE0
+
+
+This gives:
+
+FF D8 FF E0
+
+
+FF D8 is the JPEG start-of-image marker, while FF E0 is associated with the JFIF APP0 marker.
+
+This confirmed that the file was an encoded JPEG.
+
+Step 5: Decode the File
+
+I wrote a small Python script to decode the file:
+
+with open("encoded.bin", "rb") as f:
+data = f.read()
+
+print(f"Encoded length: {len(data)}")
+
+decoded = bytes((b - 42) % 256 for b in data)
+
+with open("decoded.jpg", "wb") as f:
+f.write(decoded)
+
+print("Wrote decoded.jpg")
+
+
+I then checked the resulting file:
+
+file decoded.jpg
+
+
+The output identified it as:
+
+decoded.jpg: JPEG image data, JFIF standard 1.01, ... 800x500
+
+
+The file was successfully decoded into a JPEG image.
+
+Step 6: Find the Flag
+
+Finally, I opened the image:
+
+xdg-open decoded.jpg
+
+
+The decoded image contained the flag.
+
+Flag: picoCTF{...}
