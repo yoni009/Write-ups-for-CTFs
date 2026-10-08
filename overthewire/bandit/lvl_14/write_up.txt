@@ -1,0 +1,2 @@
+echo "your_password_here" | nc localhost 30000
+trying to pass the password like this  worked and now i got the password pbLYuZtTg4MgaqfJx8jbA9gKKGqM68A7 was a little confusing because  of the instraction 

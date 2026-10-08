@@ -1,0 +1,1 @@
+run a nmap scan go to the website and then try to do a break out with admin' and comment out the rest #

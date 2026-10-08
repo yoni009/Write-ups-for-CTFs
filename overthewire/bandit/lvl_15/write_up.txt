@@ -1,0 +1,5 @@
+seems like the same exact thing but i kind need to encrypt stuff 
+echo "pbLYuZtTg4MgaqfJx8jbA9gKKGqM68A7" | ncat --ssl localhost 30001
+Correct!
+kS0Hf0u5HiXFwKMKFqXvPdOTNGGa0X8V
+ well straight forward 

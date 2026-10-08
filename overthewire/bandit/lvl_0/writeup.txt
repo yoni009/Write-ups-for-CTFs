@@ -1,0 +1,5 @@
+learing here
+writeup lvl0 
+$ssh command is flaged as :- $ssh -l username domain -p port 
+but i also think it might work as $ssh username@domain -p port and possibly password but check this later 
+goal was jut logging in i also got 6y2kwnwK6grgvwvpvLaa2T1cpFEKOhNR password 

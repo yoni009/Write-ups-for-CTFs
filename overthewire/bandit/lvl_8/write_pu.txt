@@ -1,0 +1,3 @@
+ sort data.txt | uniq -c | grep "^[[:space:]]*1 " for finding based on occreances 
+ 
+ 1 EjmOSvuAu7sGAHqHVcBDPirRe9T03kxl

@@ -1,0 +1,2 @@
+i started by running an $nmap as follow's nmap -A -sV -T5
+then ftp to there target with anonymous then used ls then got the flag with $get 

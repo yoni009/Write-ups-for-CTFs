@@ -1,0 +1,17 @@
+got the ip and we have some important credentials 
+this are form layover = Jenny Crawford / KS7X2M
+
+nmap scan came back and we have 4 points of interest  ports 3389 and 5985 ,8443,135
+running ffuf get us 2  important dirs /login /api and fuzzing /api get us /api/status 
+
+used the serial number in api/status to login 
+
+used the credentials to rdP now 
+
+xfreerdp /v:10.129.139.182  /u:KioskUser 
+password = K!osk2026# 
+
+then turned of the scanner in the dashbord which gave me a link when i pressed it took to microsoft browser then i did ctrl+O went to documents and then i gpt the user flag to open a file and get the cmd i download that now we have a cmd 
+now here is the important part we are  going to have to do a vertical privilage escalation now 
+
+ssss

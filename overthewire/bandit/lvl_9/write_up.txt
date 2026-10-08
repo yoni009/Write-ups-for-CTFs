@@ -1,0 +1,14 @@
+strings data.txt | grep '=' | grep -o '=.*' | cut -d'=' -f2-
+========= the
+=p+
+zW}
+========= password
+========= is
+
+-
+A@.
+O],
+l"C"m
+9$
+========= B0s2khmbT9u0geKuOoVGW3JZKhndE3BG
+5G

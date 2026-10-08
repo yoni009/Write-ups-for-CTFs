@@ -1,0 +1,89 @@
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-09-24 15:47 EAT
+Nmap scan report for xebec.cylabacademy.net (3.14.181.178)
+Host is up (0.26s latency).
+rDNS record for 3.14.181.178: ec2-3-14-181-178.us-east-2.compute.amazonaws.com
+Not shown: 873 filtered tcp ports (no-response), 125 closed tcp ports (conn-refused)
+PORT      STATE SERVICE VERSION
+22/tcp    open  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.19 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 52:05:1e:59:9a:32:02:04:cf:46:e2:42:1b:08:aa:e0 (ECDSA)
+|_  256 13:02:a7:7c:78:0b:e7:8e:31:4b:aa:f6:f2:82:41:91 (ED25519)
+34573/tcp open  unknown
+| fingerprint-strings: 
+|   DNSStatusRequestTCP: 
+|     Address of main: 0x570f8f9da34c
+|     Enter the address to jump to, ex => 0x12345: Your input: 71c72f65eaf0
+|     Segfault Occurred, incorrect address.
+|   DNSVersionBindReqTCP: 
+|     Address of main: 0x5b56a60ae34c
+|     Enter the address to jump to, ex => 0x12345: Your input: 7ed529208af0
+|     Segfault Occurred, incorrect address.
+|   GenericLines, NULL: 
+|     Address of main: 0x567e602a434c
+|     Enter the address to jump to, ex => 0x12345:
+|   GetRequest: 
+|     Address of main: 0x5b86126c834c
+|     Enter the address to jump to, ex => 0x12345: Your input: 7744bc200af0
+|     Segfault Occurred, incorrect address.
+|   HTTPOptions: 
+|     Address of main: 0x5e29692ae34c
+|     Enter the address to jump to, ex => 0x12345: Your input: 7c08d307caf0
+|     Segfault Occurred, incorrect address.
+|   Help: 
+|     Address of main: 0x5805e35c134c
+|     Enter the address to jump to, ex => 0x12345: Your input: 7b9aed647af0
+|     Segfault Occurred, incorrect address.
+|   RPCCheck: 
+|     Address of main: 0x56bd768e634c
+|     Enter the address to jump to, ex => 0x12345: Your input: 78f6a5415af0
+|     Segfault Occurred, incorrect address.
+|   RTSPRequest: 
+|     Address of main: 0x56ad684c834c
+|     Enter the address to jump to, ex => 0x12345: Your input: 784110463af0
+|     Segfault Occurred, incorrect address.
+|   SSLSessionReq: 
+|     Address of main: 0x5c880268834c
+|     Enter the address to jump to, ex => 0x12345: Your input: 73b6230f0af0
+|     Segfault Occurred, incorrect address.
+|   TerminalServerCookie: 
+|     Address of main: 0x5ffbc220434c
+|     Enter the address to jump to, ex => 0x12345: Your input: 75fb90c2aaf0
+|_    Segfault Occurred, incorrect address.
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port34573-TCP:V=7.95%I=7%D=9/24%Time=6AB51BDF%P=x86_64-pc-linux-gnu%r(N
+SF:ULL,4D,"Address\x20of\x20main:\x200x567e602a434c\nEnter\x20the\x20addre
+SF:ss\x20to\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20")%r(GenericLines,4D
+SF:,"Address\x20of\x20main:\x200x567e602a434c\nEnter\x20the\x20address\x20
+SF:to\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20")%r(GetRequest,8C,"Addres
+SF:s\x20of\x20main:\x200x5b86126c834c\nEnter\x20the\x20address\x20to\x20ju
+SF:mp\x20to,\x20ex\x20=>\x200x12345:\x20Your\x20input:\x207744bc200af0\nSe
+SF:gfault\x20Occurred,\x20incorrect\x20address\.\n")%r(HTTPOptions,8C,"Add
+SF:ress\x20of\x20main:\x200x5e29692ae34c\nEnter\x20the\x20address\x20to\x2
+SF:0jump\x20to,\x20ex\x20=>\x200x12345:\x20Your\x20input:\x207c08d307caf0\
+SF:nSegfault\x20Occurred,\x20incorrect\x20address\.\n")%r(RTSPRequest,8C,"
+SF:Address\x20of\x20main:\x200x56ad684c834c\nEnter\x20the\x20address\x20to
+SF:\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20Your\x20input:\x20784110463a
+SF:f0\nSegfault\x20Occurred,\x20incorrect\x20address\.\n")%r(RPCCheck,8C,"
+SF:Address\x20of\x20main:\x200x56bd768e634c\nEnter\x20the\x20address\x20to
+SF:\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20Your\x20input:\x2078f6a5415a
+SF:f0\nSegfault\x20Occurred,\x20incorrect\x20address\.\n")%r(DNSVersionBin
+SF:dReqTCP,8C,"Address\x20of\x20main:\x200x5b56a60ae34c\nEnter\x20the\x20a
+SF:ddress\x20to\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20Your\x20input:\x
+SF:207ed529208af0\nSegfault\x20Occurred,\x20incorrect\x20address\.\n")%r(D
+SF:NSStatusRequestTCP,8C,"Address\x20of\x20main:\x200x570f8f9da34c\nEnter\
+SF:x20the\x20address\x20to\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20Your\
+SF:x20input:\x2071c72f65eaf0\nSegfault\x20Occurred,\x20incorrect\x20addres
+SF:s\.\n")%r(Help,8C,"Address\x20of\x20main:\x200x5805e35c134c\nEnter\x20t
+SF:he\x20address\x20to\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20Your\x20i
+SF:nput:\x207b9aed647af0\nSegfault\x20Occurred,\x20incorrect\x20address\.\
+SF:n")%r(SSLSessionReq,8C,"Address\x20of\x20main:\x200x5c880268834c\nEnter
+SF:\x20the\x20address\x20to\x20jump\x20to,\x20ex\x20=>\x200x12345:\x20Your
+SF:\x20input:\x2073b6230f0af0\nSegfault\x20Occurred,\x20incorrect\x20addre
+SF:ss\.\n")%r(TerminalServerCookie,8C,"Address\x20of\x20main:\x200x5ffbc22
+SF:0434c\nEnter\x20the\x20address\x20to\x20jump\x20to,\x20ex\x20=>\x200x12
+SF:345:\x20Your\x20input:\x2075fb90c2aaf0\nSegfault\x20Occurred,\x20incorr
+SF:ect\x20address\.\n");
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 52.31 seconds

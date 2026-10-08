@@ -1,0 +1,16 @@
+when cron.d in etc then cat cronjob_bandit13  
+then went to tmp and made a new.sh and pasted the bash script
+to modifay as follows 
+#!/bin/bash
+
+myname='bandit23'
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+echo  $mytarget
+
+
+now am cliing to see teh target which i can cat and i changed name form (whoami) to the target
+
+
+
+  chmod u+s 

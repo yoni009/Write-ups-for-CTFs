@@ -1,0 +1,3 @@
+i started by running an $nmap as follow's nmap -A -sV -T5 10.129.207.110
+flags sV- runnning services and then -A identifes os and -T5 = speed 
+run telnet and then used root ad user name and no password required to go in pretty simple 

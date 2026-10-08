@@ -1,0 +1,11 @@
+Started with an nmap scan 
+nmap -sV -A -T5 checking services os .
+ 
+mysql is set to defualt on 127.0.0.1 so you need to adda bind address at 
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+then mysql mysql -h 10.129.95.232 --skip-ssl -u root  -p
+
+use htb 
+describe config 
+SELECT * From config;

@@ -1,0 +1,2 @@
+do an nmap scan to find the open tcp port -p- -T5
+then found Redis conncted to it using redis-cli -h and then used keys* to obtain all of the keys and the GET flag for flag 

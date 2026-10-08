@@ -1,0 +1,1 @@
+Nmap scan then connect via ftp get the files then use gobuster and sec-list to find the .php then run it 

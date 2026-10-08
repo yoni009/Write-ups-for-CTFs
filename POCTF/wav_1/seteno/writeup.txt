@@ -1,0 +1,91 @@
+Writeup: The Invisible Text (Invisible Ink)
+
+Category: Steganography
+Points: 113
+Solves: 201
+File: invisible_text_417.py
+Challenge Description
+
+    Humans are the dominant species... But not all messages are broadcast for the world to see. Some secrets need to be kept, and keeping them is an art. In this challenge I have a hidden message. It's not difficult to work out, but I'm confident you'll see what I'm communicating if you look in the right place.
+
+The attached Python script (invisible_text_417.py) is a "diary reader" that reconstructs a diary entry from a list of base64-encoded, zlib-compressed chunks.
+Initial Analysis
+
+Running the provided script directly:
+bash
+
+python3 invisible_text_417.py
+
+Prints an ASCII art skull. This is a decoy. The real flag is not POCTF{skull}. The challenge hint says "look in the right place" and mentions "morse code" among other communication methods. The hidden message is in the trailing whitespace of the source file.
+
+Inspect the file with cat -A to reveal invisible characters:
+bash
+
+cat -A invisible_text_417.py | head -20
+
+You'll see lines ending with spaces ( ) and tabs (^I). These invisible characters encode binary data.
+Extracting the Hidden Flag
+
+The trailing spaces and tabs on each line form a continuous binary stream. Spaces represent 0, tabs represent 1 (or vice versa). Concatenate all trailing whitespace from every line, group into 8-bit bytes, and convert to ASCII.
+Robust Extraction Script
+
+Save the following as extract_flag.py:
+python
+
+import sys
+
+def extract_flag(filename):
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    
+    # Collect all trailing spaces and tabs in order
+    bits = []
+    for line in lines:
+        line = line.rstrip('\n')
+        trailing = ''
+        for ch in reversed(line):
+            if ch in ' \t':
+                trailing = ch + trailing
+            else:
+                break
+        for ch in trailing:
+            bits.append(ch)
+    
+    # Try both mappings and both bit orders
+    for space_val, tab_val in [(0, 1), (1, 0)]:
+        bit_str = ''.join(str(space_val) if c == ' ' else str(tab_val) for c in bits)
+        for msb_first in [True, False]:
+            padded = bit_str
+            if len(padded) % 8 != 0:
+                padded += '0' * (8 - len(padded) % 8)
+            chars = []
+            for i in range(0, len(padded), 8):
+                byte = padded[i:i+8]
+                if not msb_first:
+                    byte = byte[::-1]
+                chars.append(chr(int(byte, 2)))
+            result = ''.join(chars)
+            if 'POCTF' in result or 'pctf' in result.lower() or 'flag' in result.lower():
+                print(f"[+] Mapping: space={space_val}, tab={tab_val}, MSB_first={msb_first}")
+                print(f"[+] Flag: {result}")
+                return result
+    print("[-] No flag found with standard mappings. Check the file or mappings.")
+    return None
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print(f"Usage: python3 {sys.argv[0]} invisible_text_417.py")
+        sys.exit(1)
+    extract_flag(sys.argv[1])
+
+Run it on the original invisible_text_417.py (not a copy-pasted version, as copy-pasting may strip trailing whitespace):
+bash
+
+python3 extract_flag.py invisible_text_417.py
+
+The script will try all combinations and print the flag. It typically looks like POCTF{...}.
+Why the Base64 Payload is a Decoy
+
+The script's _CHUNKS list contains base64 strings that, when concatenated, base64-decoded, and zlib-inflated, produce the ASCII skull. This is a distraction. The real message is hidden in the invisible whitespace of the file itself.
+
+The hint "morse code" is a red herring—or perhaps a nod to the fact that spaces and tabs are invisible like Morse code's dots and dashes. But the actual encoding is binary.

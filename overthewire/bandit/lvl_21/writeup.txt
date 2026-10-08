@@ -1,0 +1,1 @@
+i went to /etc/cron.d to see whats available then i just used cat on bandit22 and then form there i got another path which i used cat to pretty simple its just reading files for the password paths bandit22 /usr/bin/cronjob_bandit22.sh 

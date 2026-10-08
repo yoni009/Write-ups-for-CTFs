@@ -1,0 +1,3 @@
+start a RFI with the your ip and then make responder listen to grab the hash for john 
+once u have the password sign in and use this 
+sudo evil-winrm -u Administrator -p badminton -i 10.129.95.234

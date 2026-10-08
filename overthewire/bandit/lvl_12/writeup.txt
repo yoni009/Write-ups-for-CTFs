@@ -1,0 +1,4 @@
+cat the file 1f8b 0808 b2f0 3b6a 0203 6461 7461 322e took this and run it through an identifiery or the magic byte identifier actually 
+and it cam in as a compressed file made  a new directory in tmp with mktmp -d  $cp data.txt there 
+oh yes and the file is a hexa-dump to and it is compressed many times we will have to figure tis part out to 
+so we had a break through apparently u can reverse a hexdump $xxd -r data.txt > new.txt then reamned to .gz and then $gzip -d then conver it agin and keep decompressing ! so after doing that for a while i got to a file called data5.bin same thing chek with file convert with mv decompress and you will get it eventually 

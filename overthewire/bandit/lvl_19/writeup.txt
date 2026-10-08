@@ -1,0 +1,1 @@
+u can excute comad withthe ELF file 

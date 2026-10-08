@@ -1,0 +1,2 @@
+used $ls -A -l to see hidden stuff 
+$cat ./...Hiding-From-You

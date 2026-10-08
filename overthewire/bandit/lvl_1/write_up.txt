@@ -1,0 +1,6 @@
+used cd .. to get back to home directory 
+am now looking foe readme
+i did ls and i see - 
+i have to figuer what to with this 
+i did $ cat ./_
+and got PK8fYLZg2hnHSz83plBL1iEPKdD3QToB

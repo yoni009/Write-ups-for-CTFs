@@ -1,0 +1,11 @@
+This one was hard for me, but I kind of figured it out by playing around with the file and doing some reconnaissance. I ran nmap -sV -A and found some interesting ports.
+
+The key thing I realized is that ./su is a client—it connects to a listener. So I needed to send the bandit20 password to it from /etc/bandit_pass/bandit20. I set it up like this:
+bash
+
+(cat /etc/bandit_pass/bandit20; sleep 1) | nc -l -p 12345 &./su 12345
+
+I ran the listener in the background with &, and then pointed ./su at the port netcat was listening on. It read the password, verified it was correct, and spit out the bandit21 password.
+
+The sleep 1 is important without it, netcat closes the connection too fast and the binary can't read the data.
+

@@ -1,0 +1,12 @@
+Pico ctf 
+deficulty easy 
+
+
+Old_sesions 
+
+
+link - "http://chatelaine.cylabacademy.net:22054/"
+
+first thing i will do is inspect the code to find anything suspicious in the code maybe if it's leaking any informations 
+
+made an account and checked the page there is a hint there is a direcotry called /sessions which i went to and fot the admis session id which i used to send the request throu repater to session hijack him  _Uy0BFT0H-edVptgT4FVoZ0a2JpnzvOpoaKeUk1BJb4 the used this id and we  were succefull cool 

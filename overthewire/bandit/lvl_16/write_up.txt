@@ -1,0 +1,3 @@
+nmap then echo "kS0Hf0u5HiXFwKMKFqXvPdOTNGGa0X8V" | openssl s_client -connect localhost:31790 -quiet
+and got a priavte key  i logged in using the private key 
+now there old password and new password stuff going on 
