@@ -1,6 +1,0 @@
-HTTP/2 200 
-link: <https://bricks.thm/wp-json/>; rel="https://api.w.org/"
-content-type: text/html; charset=UTF-8
-date: Sat, 26 Sep 2026 15:53:56 GMT
-server: Apache
-
